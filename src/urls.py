@@ -7,25 +7,19 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
-    (r'^$', 'django_sample.plus.views.index'),
+    (r'^$', 'plus.views.index'),
     
-    (r'^oauth2callback', 'django_sample.plus.views.auth_return'),
-
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^oauth2callback', 'plus.views.auth_return'),
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
     
     # adicioanr o URL do G_CAL
-    (r'^g_cal/', include('django_sample.g_cal.urls')),
-    
+    (r'^g_cal/', include('g_cal.urls', namespace='g_cal')),
     
     (r'^accounts/login/$', 'django.contrib.auth.views.login',
                         {'template_name': 'plus/login.html'}),
 
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',
-        {'document_root': os.path.join(os.path.dirname(__file__), 'static')
-}),
+        {'document_root': os.path.join(os.path.dirname(__file__), 'static')}),
 )

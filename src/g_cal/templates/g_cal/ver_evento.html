@@ -1,0 +1,21 @@
+
+<html>
+  <head>
+    <title>Suas agendas no Google Calendar</title>
+    <style type=text/css>
+      td  { vertical-align: top; padding: 0.5em }
+      img { border:0 }
+    </style>
+  </head>
+  <body><h2>Ver detalhes do evento</h2>
+    <table border=1>
+      <tr>
+      	<td>{{ event.id }}</td>
+      	<td>{{ event.summary }}</td>
+      	<td>{{ event.status }}</td>
+      	<td>{{ event.created }}</td>
+      	<td>{{ event.description }}</td>
+      </tr>
+    </table>
+  </body>
+</html>

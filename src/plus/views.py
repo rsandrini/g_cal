@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 
 from oauth2client.django_orm import Storage
 from oauth2client.client import OAuth2WebServerFlow
-from django_sample.plus.models import CredentialsModel
-from django_sample.plus.models import FlowModel
+from plus.models import CredentialsModel
+from plus.models import FlowModel
 from apiclient.discovery import build
 
 from django.http import HttpResponseRedirect
@@ -17,6 +17,11 @@ from django.shortcuts import render_to_response
 
 STEP2_URI = 'http://localhost:8000/oauth2callback'
 
+"""
+Limpar estes dados antes de enviar ao GIT
+"""
+_cliente_id = ""
+_cliente_secret = ""
 
 @login_required
 def index(request):
