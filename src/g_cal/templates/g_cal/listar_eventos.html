@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Seus agendamento no Google Calendar</title>
+    <style type=text/css>
+      td  { vertical-align: top; padding: 0.5em }
+      img { border:0 }
+    </style>
+  </head>
+  <body><h2>Lista de Itens da sua agenda</h2>
+  	<a href="/g_cal/listar_calendarios"> Voltar a lista de calendarios</a>
+  	<a href="/g_cal/{{ calendario_id }}/novo_evento/"> Novo Evento</a>
+    <table border=1>
+      {% for event in events.items %}
+      <tr>
+      	<td><a href="/g_cal/{{ calendario_id }}/{{ event.id }}/ver_evento">{{ event.summary }}</a></td>
+      	<td><a href="/g_cal/{{ calendario_id }}/{{ event.id }}/editar_evento">Alterar</a></td>
+      	
+      	<td><a href="/g_cal/{{ calendario_id }}/{{ event.id }}/deletar_evento">Excluir</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

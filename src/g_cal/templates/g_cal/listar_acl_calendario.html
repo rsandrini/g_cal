@@ -1,0 +1,21 @@
+
+<html>
+  <head>
+    <title>Suas agendas no Google Calendar</title>
+    <style type=text/css>
+      td  { vertical-align: top; padding: 0.5em }
+      img { border:0 }
+    </style>
+  </head>
+  <body><h2>Listas ACL da sua agenda</h2>
+  	<a href="/g_cal/listar_calendarios"> Voltar a lista de calendarios</a>
+    <table border=1>
+      {% for acl_ in acl.items %}
+      <tr>
+      	<td>{{ acl_.id }}</td>
+      	<td>{{ acl_.role }}</td>
+      	</tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

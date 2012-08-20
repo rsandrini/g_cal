@@ -11,8 +11,9 @@
     <table border=1>
       {% for agenda in agendas.items %}
       <tr>
-      	<td>{{ agenda.id }}</td>
-      	<td>{{ agenda.summary }}</td>
+      	<td><a href="/g_cal/{{ agenda.id }}/listar_eventos">{{ agenda.summary }}</a></td>
+      	<td><a href="/g_cal/{{ agenda.id }}/listar_acl_calendario"> ACL </a></td>
+      	<td><a href="/g_cal/{{ agenda.id }}/ver_calendario_g"> Ver o calendario </a></td>
       	</tr>
       {% endfor %}
     </table>

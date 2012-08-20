@@ -1,0 +1,106 @@
+<form class="formee" method="post" id="formEvento" action="{{ action }}">
+	{% csrf_token %}
+		
+	<div>
+		<label>Titulo do evento</label>
+		<input type="text" name="titulo">
+	</div>	
+	<hr>
+	<div>
+		<label>Agenda (id)</label>
+		<input type="text" name="agenda" value="{{ calendar.id }}">
+	</div>	
+	<hr>
+	<div>
+		<label>Descrição do evento</label><br>
+		<textarea cols="60" rows="5" name="descricao" id="descricao"></textarea>
+	</div>	
+	<hr>
+	<div> 
+		<label>Inicia data:</label>
+		<input type="text" name="dt_inicio" id="dt_inicio">
+	</div>
+	<hr>	
+	<div>
+		<label>Repetição</label>
+		<select id="cbo_repeticao" name="cbo_repeticao" class="formee-small"> 
+			<option value="diario" id="diario">Diario</option>
+			<option value="semanal" id="semanal">Semanal</option>
+			<option value="mensal" id="mensal">Mensal</option>
+			<option value="unico" id="unico">Único</option>
+		</select>	
+		<label>Repetir de :</label>
+		<input type="text" name="rep_a_cada" id="rep_a_cada">	
+	</div>
+	<hr>
+	<div>
+		<span class="">
+			<input id="ds_dom" type="checkbox" title="domingo" name="ds_dom">
+			<label title="domingo">D</label>
+		</span>
+		<span class="">
+			<input id="ds_seg" type="checkbox" title="segunda" name="ds_seg" checked>
+			<label title="segunda">S</label>
+		</span>
+		<span class="">
+			<input id="ds_ter" type="checkbox" title="terça" name="ds_ter" checked>
+			<label title="terça">T</label>
+		</span>
+		<span class="">
+			<input id="ds_qua" type="checkbox" title="quarta" name="ds_qua" checked>
+			<label title="quarta">Q</label>
+		</span>
+		<span class="">
+			<input id="ds_qui" type="checkbox" title="quinta" name="ds_qui" checked>
+			<label title="quinta">Q</label>
+		</span>
+		<span class="">
+			<input id="ds_sex" type="checkbox" title="sexta" name="ds_sex" checked>
+			<label title="sexta">S</label>
+		</span>
+		<span class="">
+			<input id="ds_sab" type="checkbox" title="sabado" name="ds_sab">
+			<label title="sabado">S</label>
+		</span>
+	</div>
+	<hr>
+
+	<div> 
+		<label>Termina:</label>
+		<br>
+		<label>Após x ocorrencias</label>
+		<input type="text" name="tm_ocorrencias" id="tm_ocorrencias">
+		<br>
+		<label>Será eterno</label>
+		<input id="tm_sempre" type="checkbox" title="Sempre" name="tm_sempre">
+		<br>
+
+		<label>Data</label>
+		<input type="text" name="dt_fim" id="dt_fim">
+		
+	</div>
+	<hr>
+	<div> 
+		<label>Horario Inicio:</label>
+		<input type="text" name="hr_inicio" id="hr_inicio">
+		<label>Horario fim:</label>
+		<input type="text" name="hr_fim" id="hr_fim">
+	</div>
+	
+	<div> 
+		<label>O dia todo:</label>
+		<input id="dia_todo" type="checkbox" title="Dia Todo" name="dia_todo">
+	</div>
+
+	<button>Salvar</button>
+
+</form>
+<hr>
+	{% if dados %}
+		<label> resultados do post</label>
+		
+		{% for i in dados %}
+			<p>{{ i }}</p>
+		{% endfor %}
+	{% endif %}
+	

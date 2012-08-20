@@ -1,0 +1,20 @@
+
+<html>
+  <head>
+    <title>Suas agendas no Google Calendar</title>
+    <style type=text/css>
+      td  { vertical-align: top; padding: 0.5em }
+      img { border:0 }
+    </style>
+  </head>
+  <body><h2>Ver detalhes da agenda {{ calendar.summary }}</h2>
+  	<a href="/g_cal/"> Voltar a lista de agendas</a>
+  	<br>
+  	<br>
+  	<br>
+		<iframe src="https://www.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src={{ calendar.id }}&amp;color=%235229A3&amp;ctz=America%2FSao_Paulo" 
+		style=" border-width:0 " width="800" height="600" frameborder="0" scrolling="no"></iframe>
+  </body>
+</html>
+
+
