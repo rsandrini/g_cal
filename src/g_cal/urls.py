@@ -24,7 +24,9 @@ urlpatterns = patterns('',
     
     (r'^(?P<calendario_id>[a-zA-Z0-9.@_]+)/ver_calendario_g/$', 'g_cal.views.ver_calendario_g'),
     
-    (r'^(?P<calendario_id>[a-zA-Z0-9.@_]+)/vincular_pessoa_calendario/$', 'g_cal.views.vincular_pessoa_calendario'),
+    (r'^(?P<calendario_id>[a-zA-Z0-9.@_]+)/nova_acl/$', 'g_cal.views.nova_acl'),
+    
+    (r'^(?P<calendario_id>[a-zA-Z0-9.@_]+)/(?P<acl_id>[a-zA-Z0-9.:@_]+)/deletar_acl/$', 'g_cal.views.deletar_acl'),
     
     url(r'^listar_calendarios/$', listar_calendarios, name='listar_calendarios'),
     

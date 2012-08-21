@@ -1,0 +1,37 @@
+<form class="formee" method="post" id="formCalendario" action="{{ action }}">
+	{% csrf_token %}
+	<h1>Beta do Alpha</h1>
+	<div>
+		<label>ROLE</label>
+		<input type="text" name="role">
+		<br>
+		The role assigned to the scope. Possible values are:
+
+    "none" - Provides no access.
+    "freeBusyReader" - Provides read access to free/busy information.
+    "reader" - Provides read access to the calendar. Private events will appear to users with reader access, but event details will be hidden.
+    "writer" - Provides read and write access to the calendar. Private events will appear to users with writer access, and event details will be visible.
+    "owner" - Provides ownership of the calendar. This role has all of the permissions of the writer role with the additional ability to see and manipulate ACLs.
+
+	</div>	
+	<div>
+		<label>TYPE</label>
+		<input type="text" name="type">
+		<br>
+		The type of the scope. Possible values are:
+
+    "default" - The public scope. This is the default value.
+    "user" - Limits the scope to a single user.
+    "group" - Limits the scope to a group.
+    "domain" - Limits the scope to a domain.
+
+Note: The permissions granted to the "default", or public, scope apply to any user, authenticated or not.
+	</div>
+	<div>
+		<label>VALUE</label>
+		<input type="text" name="value">
+		<br>
+		The email address of a user or group, or the name of a domain, depending on the scope type. Omitted for type "default".
+	</div>
+	<button>Salvar</button>
+</form>

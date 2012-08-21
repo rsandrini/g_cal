@@ -3,22 +3,22 @@
 		
 	<div>
 		<label>Titulo do evento</label>
-		<input type="text" name="titulo">
+		<input type="text" name="titulo" value="{{ event.summary }}">
 	</div>	
 	<hr>
 	<div>
 		<label>Agenda (id)</label>
-		<input type="text" name="agenda" value="{{ calendar.id }}">
+		<input type="text" name="agenda" value="{{ calendario_id }}">
 	</div>	
 	<hr>
 	<div>
 		<label>Descrição do evento</label><br>
-		<textarea cols="60" rows="5" name="descricao" id="descricao"></textarea>
+		<textarea cols="60" rows="5" name="descricao" id="descricao">{{ event.description }}</textarea>
 	</div>	
 	<hr>
 	<div> 
 		<label>Inicia data:</label>
-		<input type="text" name="dt_inicio" id="dt_inicio">
+		<input type="text" name="dt_inicio" id="dt_inicio" value="{{ event.start.date }}">
 	</div>
 	<hr>	
 	<div>
@@ -30,7 +30,7 @@
 			<option value="unico" id="unico">Único</option>
 		</select>	
 		<label>Repetir de :</label>
-		<input type="text" name="rep_a_cada" id="rep_a_cada">	
+		<input type="text" name="rep_a_cada" id="rep_a_cada" value="1">	
 	</div>
 	<hr>
 	<div>

@@ -8,12 +8,15 @@
     </style>
   </head>
   <body><h2>Listas ACL da sua agenda</h2>
+  	<a href="/g_cal/{{ calendario_id }}/nova_acl/"> Novo ACL</a>
   	<a href="/g_cal/listar_calendarios"> Voltar a lista de calendarios</a>
     <table border=1>
       {% for acl_ in acl.items %}
       <tr>
-      	<td>{{ acl_.id }}</td>
+      	<td>{{ acl_.scope.type }}</td>
+      	<td>{{ acl_.scope.value }}</td>
       	<td>{{ acl_.role }}</td>
+      	<td><a href="/g_cal/{{ calendario_id }}/{{ acl_.id }}/deletar_acl/">Deletar</a></td>
       	</tr>
       {% endfor %}
     </table>
