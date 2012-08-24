@@ -1,78 +1,111 @@
 # coding: utf-8
-from apiclient.discovery import build
-from oauth2client.file import Storage
-from oauth2client.client import OAuth2WebServerFlow
-from oauth2client.tools import run
-
-from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response
+import os
+import logging
 import httplib2
-import gflags
 
-from django.template import RequestContext
-from django.utils.encoding import smart_str, smart_unicode
+from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
+
+from oauth2client.django_orm import Storage
+from oauth2client.client import OAuth2WebServerFlow
+from g_cal.models import CredentialsModel
+from g_cal.models import FlowModel
+from apiclient.discovery import build
+
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+import sys
+from django.contrib.sites.models import Site
 '''
 @author: Rafael Sandrini Santos
-@version: 0.1 2012-08-14
-
-Metodo de listar eventos do calendario principal GOOGLE API CALENDAR 3.0
-Altere os dados de cliente_id, cliente_secret e developer_key
-No primeiro acesso sera aberto uma nova aba/janela para autorizacao 
-de acesso ao google Calendar. isto e conhecido como "consentimento do usuario"
-Basta selecionar que autoriza... O token e trocado automaticamente e ele deve
-mostrar uma lista com as tarefas da agenda principal.
+@version: 0.2 2012-08-24
 '''
 
-"""
-Limpar estes dados antes de enviar ao GIT
-"""
-_cliente_id = "762839273641-ccoho801k4gtgl77sipud30s8rvm3sn1.apps.googleusercontent.com"
-_cliente_secret = "DYBBc2Rs8_y7u5_Aj4loihuu"
-_developer_key = "AIzaSyDUh0YTPqD0FBy7B0lUoi9YCbeB0WtqvlY"
+'''
+G_CAL 0.2
+Integra com o calendário do google na versão 3 da api.
+É Necessario ter e client_id e cliente_secret para autenticar.
+Veja em https://code.google.com/apis/console/ seus dados 
 
+Infos: Altere no /admin os dados de (site) para que ele tenha a referencia correta
+na hora de executar a STEP2 da autenticação.
+
+Funcionamento:
+Após o cliente autorizar o acesso do APP na conta google ele registra a credencial no banco.
+Este processo funciona apenas com as bibliotecas mais atuais do google calendar para python
+Na versão "baixavel" deles na data de hoje ainda apresenta problemas, tive que atualizar manualmente
+as bibliotecas do Python para conseguir rodar o projeto corretamente.
+
+Os metodos, chamadas, atributos etc podem ser consultados em:
+https://developers.google.com/google-apps/calendar/?hl=pt-BR
+
+Versões deste app podem ser vistos em:
+https://github.com/rafilsk/g_cal
+
+Este código ainda é beta e precisa de muita refatoração, foi apenas para demonstrar e entender o 
+funcionando da autenticação e troca de informações atraves do protocolos do google.
+
+'''
+
+_cliente_id     = ''
+_cliente_secret = '' 
+_user_agent     = '' #nome do APP registrado na google
+_scope          = 'https://www.googleapis.com/auth/calendar'
+
+flow = OAuth2WebServerFlow(
+        client_id= _cliente_id,
+        client_secret= _cliente_secret,
+        scope= _scope,
+        user_agent=_user_agent)
+
+current_site = Site.objects.get_current()
+STEP2_URI = "http://"+str(current_site)+"/g_cal/auth_return"
+
+@login_required
 def authentic(request):
-    FLAGS = gflags.FLAGS
-    # Configure um objeto de fluxo para ser utilizado se precisa autenticar. este
-    # Exemplo usa OAuth 2.0, e montamos o OAuth2WebServerFlow com
-    # Informações de que necessita para autenticar. Note-se que é chamado
-    # Fluxo Servidor Web, mas também pode lidar com o fluxo para o nativo
-    # Aplicações
-    # O client_id e client_secret são copiados a partir do separador Acesso API em
-    # O Google APIs Console
-    FLOW = OAuth2WebServerFlow(
-    client_id=_cliente_id,
-    client_secret=_cliente_secret,
-    scope='https://www.googleapis.com/auth/calendar',
-    user_agent='SS-Google/1.0') # Nome e versão da aplicação e não da API google
-    # Para desativar o recurso de servidor local, descomente a seguinte linha:
-    #FLAGS.auth_local_webserver = False
+    storage = Storage(CredentialsModel, 'id', request.user, 'credential')
+    credential = storage.get()
+    if credential is None or credential.invalid == True:
+        
+        authorize_url = flow.step1_get_authorize_url(STEP2_URI)
+        f = FlowModel(id=request.user, flow=flow)
+        f.save()
+        return authorize_url
+    else:
+        http = httplib2.Http()
+        http = credential.authorize(http)
+            
+        service = build(serviceName='calendar', version='v3', http=http) 
+        
+        return service
 
 
-    # Se as credenciais não existem ou são inválidas, executado através do cliente nativo
-    # Fluxo. O objeto de armazenamento irá garantir que, se bem sucedida a boa Credenciais 
-    # vai ficar gravado de volta para um arquivo
+@login_required
+def auth_return(request):
+    f = FlowModel.objects.get(id=request.user)
     
-    # Cria uma credencial por usuario.
-    user = request.user.username
-    storage = Storage('dat/calendar-'+smart_str(user)+'.dat')
-    credentials = storage.get()
+    credential = f.flow.step2_exchange(request.REQUEST) #Zica aqui...
     
-    if credentials is None or credentials.invalid == True:
-      print "Credenciais invalidas"
-      credentials = run(FLOW, storage)
- 
-    
-    http = httplib2.Http()
-    http = credentials.authorize(http)
+    storage = Storage(CredentialsModel, 'id', request.user, 'credential')
+    storage.put(credential)
+    f.delete()
+    return HttpResponseRedirect("/g_cal/")
 
-    
-    service = build(serviceName='calendar', version='v3', http=http,
-          developerKey=_developer_key) 
-    
-    return service
 
+@login_required
+def listar_calendarios(request):
+    try:
+        service = authentic(request)
+        calendar_list = service.calendarList().list().execute()
+        return render_to_response('g_cal/lista_calendarios.html', {
+            'agendas': calendar_list,
+            })
+    except:
+        print "Redirecionando para autorização do usuario"
+        return HttpResponseRedirect(service)
+    
+    
 @login_required
 def listar_eventos(request, calendario_id):
     service = authentic(request)
@@ -82,13 +115,8 @@ def listar_eventos(request, calendario_id):
                 })
 
 
-@login_required
-def listar_calendarios(request):
-    service = authentic(request)
-    calendar_list = service.calendarList().list().execute()
-    return render_to_response('g_cal/lista_calendarios.html', {
-            'agendas': calendar_list,
-            })
+
+    
     
 @login_required
 def novo_evento(request, calendario_id):
@@ -361,7 +389,7 @@ def montar_evento(request):
            'recurrence': [recurrence],
          'attendees': [
            {
-             'email': 'rafael@sandrini.com.br',
+             'email': 'email@exemple.com.br',
              # Other attendee's data...
            },
            # ...
@@ -383,7 +411,7 @@ def montar_evento(request):
          },
          'attendees': [
            {
-             'email': 'rafael@sandrini.com.br',
+             'email': 'email@exemple.com.br',
              # Other attendee's data...
            },
            # ...

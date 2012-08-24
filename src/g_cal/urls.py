@@ -37,8 +37,8 @@ urlpatterns = patterns('',
     (r'^accounts/login/$', 'django.contrib.auth.views.login',
                         {'template_name': 'g_cal/login.html'}),
                        
-                           
-    (r'^oauth2callback', 'plus.views.auth_return'),
+
+    (r'^auth_return', 'g_cal.views.auth_return'),
     
     (r'^static/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'static')
